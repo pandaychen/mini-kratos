@@ -88,6 +88,8 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 			cancel func()
 			addr   string
 		)
+
+		// 热更新：取配置，加读锁，正确的用法
 		s.mutex.RLock()
 		conf := s.conf
 		s.mutex.RUnlock()
@@ -248,6 +250,8 @@ func (s *Server) SetConfig(conf *ServerConfig) (err error) {
 	if conf.Network == "" {
 		conf.Network = "tcp"
 	}
+
+	// 热更新：写配置，加写锁，正确的用法
 	s.mutex.Lock()
 	s.conf = conf
 	s.mutex.Unlock()
